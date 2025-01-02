@@ -18,8 +18,19 @@ public class NameSurferEntry implements NameSurferConstants {
  * followed by integers giving the rank of that name for each
  * decade.
  */
+
 	public NameSurferEntry(String line) {
-		// You fill this in //
+        int nameEndIdx = line.indexOf(' ');
+        // get the name with the space index
+        name = line.substring(0, nameEndIdx);
+        // leave only the integers
+        line = line.substring(nameEndIdx + 1);
+
+        // save the ranks in an array
+        String[] ranksStr = line.split(' ');
+        for (int i = 0; i < NDECADES; i++) {
+            ranks[i] = Integer.parseInt(ranksStr[i]);
+        }
 	}
 
 /* Method: getName() */
@@ -27,8 +38,7 @@ public class NameSurferEntry implements NameSurferConstants {
  * Returns the name associated with this entry.
  */
 	public String getName() {
-		// You need to turn this stub into a real implementation //
-		return null;
+		return name;
 	}
 
 /* Method: getRank(decade) */
@@ -40,8 +50,7 @@ public class NameSurferEntry implements NameSurferConstants {
  * not appear in a decade, the rank value is 0.
  */
 	public int getRank(int decade) {
-		// You need to turn this stub into a real implementation //
-		return 0;
+		return ranks[decade];
 	}
 
 /* Method: toString() */
@@ -50,8 +59,17 @@ public class NameSurferEntry implements NameSurferConstants {
  * NameSurferEntry.
  */
 	public String toString() {
-		// You need to turn this stub into a real implementation //
-		return "";
+        String entryString = name + " ";
+
+        for (int i = 0; i < NDECADES; i++) {
+            entryString += ranks[i] + " ";
+        }
+
+        return entryString;
 	}
+
+    /* INSTANCE VARIABLES */
+    private String name;
+    private int[NDECADES] ranks;
 }
 
