@@ -27,9 +27,9 @@ public class NameSurferEntry implements NameSurferConstants {
         line = line.substring(nameEndIdx + 1);
 
         // save the ranks in an array
-        String[] ranksStr = line.split(' ');
+        String[] rankStrings = line.split(" ");
         for (int i = 0; i < NDECADES; i++) {
-            ranks[i] = Integer.parseInt(ranksStr[i]);
+            ranks[i] = Integer.parseInt(rankStrings[i]);
         }
 	}
 
@@ -59,17 +59,18 @@ public class NameSurferEntry implements NameSurferConstants {
  * NameSurferEntry.
  */
 	public String toString() {
-        String entryString = name + " ";
+        String entryString = name + " [";
 
         for (int i = 0; i < NDECADES; i++) {
             entryString += ranks[i] + " ";
         }
+        entryString += "]";
 
         return entryString;
 	}
 
     /* INSTANCE VARIABLES */
     private String name;
-    private int[NDECADES] ranks;
+    private int[] ranks = new int[NDECADES];
 }
 

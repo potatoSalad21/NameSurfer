@@ -7,17 +7,29 @@
 
 import acm.program.*;
 import java.awt.event.*;
+import java.io.IOException;
 import javax.swing.*;
 
-public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
-
+public class NameSurfer extends Program implements NameSurferConstants {
+    public NameSurfer() {
+        graph = new NameSurferGraph();
+        add(graph);
+    }
 /* Method: init() */
 /**
  * This method has the responsibility for reading in the data base
  * and initializing the interactors at the bottom of the window.
  */
 	public void init() {
-	}
+        addInteractors();
+        try { // in case file read operation fails
+            db = new NameSurferDataBase(NAMES_DATA_FILE);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        addActionListeners();
+    }
+
 
 /* Method: actionPerformed(e) */
 /**
@@ -26,5 +38,37 @@ public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
  * button actions.
  */
 	public void actionPerformed(ActionEvent e) {
+        String command = e.getActionCommand();
+        if (e.getSource() == textField || command.equals("Graph")) {
+            NameSurferEntry entry = db.findEntry(textField.getText());
+            if (entry != null) {
+                graph.addEntry(entry);
+                graph.update();
+            }
+        } else if (command.equals("Clear")) {
+            graph.clear();
+        }
 	}
+
+    // adds all interactors on the bottom
+    private void addInteractors() {
+        // add text field
+        JLabel label = new JLabel("");
+        textField = new JTextField("name", 50);
+        textField.addActionListener(this);
+        // add buttons
+        JButton graphBtn = new JButton("Graph");
+        JButton clearBtn = new JButton("Clear");
+
+        add(label, SOUTH);
+        add(textField, SOUTH);
+        add(graphBtn, SOUTH);
+        add(clearBtn, SOUTH);
+    }
+
+    /* INSTANCE VARIABLES */
+
+    JTextField textField;
+    NameSurferDataBase db;
+    NameSurferGraph graph;
 }

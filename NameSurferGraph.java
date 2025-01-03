@@ -19,14 +19,19 @@ public class NameSurferGraph extends GCanvas
 	*/
 	public NameSurferGraph() {
 		addComponentListener(this);
-		//	 You fill in the rest //
+        update();
 	}
 
 	/**
 	* Clears the list of name surfer entries stored inside this class.
 	*/
 	public void clear() {
-		//	 You fill this in //
+        entryList.clear();
+
+        for (int i = 0; i < entries.size(); i++) {
+            remove(entries.get(i));
+        }
+        entries.clear();
 	}
 
 	/* Method: addEntry(entry) */
@@ -36,10 +41,7 @@ public class NameSurferGraph extends GCanvas
 	* simply stores the entry; the graph is drawn by calling update.
 	*/
 	public void addEntry(NameSurferEntry entry) {
-		// You fill this in //
 	}
-
-
 
 	/**
 	* Updates the display image by deleting all the graphical objects
@@ -49,15 +51,35 @@ public class NameSurferGraph extends GCanvas
 	* the size of the canvas changes.
 	*/
 	public void update() {
-		//	 You fill this in //
+        removeAll();
+        drawGrid();
 	}
 
+    private void drawBorder() {
+        GLine marginLineUpper = new GLine(0, getWidth() - GRAPH_MARGIN_SIZE, getWidth(), getHeight() - GRAPH_MARGIN_SIZE);
+        GLine marginLineLower = new GLine(0, GRAPH_MARGIN_SIZE, getWidth(), GRAPH_MARGIN_SIZE);
+        add(marginLineUpper);
+        add(marginLineLower);
+    }
 
+    private void drawGrid() {
+        drawBorder();
 
+        double lineStartX = 0;
+        for (int i = 0; i < NDECADES; i++) {
+            GLine line = new GLine(lineStartX, 0, lineStartX, getHeight());
+            add(line);
+
+            lineStartX += getWidth() / NDECADES;
+        }
+    }
 
 	/* Implementation of the ComponentListener interface */
 	public void componentHidden(ComponentEvent e) { }
 	public void componentMoved(ComponentEvent e) { }
 	public void componentResized(ComponentEvent e) { update(); }
 	public void componentShown(ComponentEvent e) { }
+
+    /* INSTANCE VARIABLES */
+    private ArrayList<NameSurferEntry> entryList = new ArrayList<>();
 }
