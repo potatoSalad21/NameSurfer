@@ -28,10 +28,15 @@ public class NameSurferGraph extends GCanvas
 	public void clear() {
         entryList.clear();
 
-        for (int i = 0; i < lines.size(); i++) {
-            remove(lines.get(i));
+        for (GLine line : lines) {
+            remove(line);
         }
         lines.clear();
+
+        for (GLabel label : labels) {
+            remove(label);
+        }
+        labels.clear();
 	}
 
 	/* Method: addEntry(entry) */
@@ -56,38 +61,106 @@ public class NameSurferGraph extends GCanvas
         drawGraph();
 	}
 
+    // draws/updates the graph and labels
     private void drawGraph() {
-        drawGrid();
-        drawDates();
-        drawSurfLines();
+        double decadeSeparatorWidth = (double) getWidth() / NDECADES;
+
+        drawGrid(decadeSeparatorWidth);
+        drawDecades(decadeSeparatorWidth);
+        drawNames(decadeSeparatorWidth);
     }
 
-    private void drawDates() {
-        double decadeSeparatorWidth = (double) getWidth() / NDECADES;
+    // draws the decade labels
+    private void drawDecades(double separatorWidth) {
         for (int i = 0; i < NDECADES; i++) {
-            double dateX = i * decadeSeparatorWidth;
+            double dateX = i * separatorWidth;
             GLabel decadeLabel = new GLabel(Integer.toString(START_DECADE + 10 * i));
-            add(decadeLabel, dateX, getHeight() - GRAPH_MARGIN_SIZE / 4);
+            add(decadeLabel, dateX, getHeight() - GRAPH_MARGIN_SIZE / 4.0);
         }
     }
 
-    private void drawGrid() {
+    private void drawGrid(double separatorWidth) {
         // draw borders
         GLine marginLineUpper = new GLine(0, getWidth() - GRAPH_MARGIN_SIZE, getWidth(), getHeight() - GRAPH_MARGIN_SIZE);
         GLine marginLineLower = new GLine(0, GRAPH_MARGIN_SIZE, getWidth(), GRAPH_MARGIN_SIZE);
         add(marginLineUpper);
         add(marginLineLower);
 
-        double lineSeparatorX = (double) getWidth() / NDECADES;
         for (int i = 0; i < NDECADES; i++) {
-            double lineX = lineSeparatorX * i;
+            double lineX = separatorWidth * i;
             GLine line = new GLine(lineX, 0, lineX, getHeight());
             add(line);
         }
     }
 
-    private void drawSurfLines() {
-        double lineStartX = 0;
+    private void drawNames(double separatorWidth) {
+        for (int i = 0; i < entryList.size(); i++) {
+            Color color = getColor(i % 4);
+
+            drawSurfLines(entryList.get(i), color, separatorWidth);
+            drawSurfNames(entryList.get(i), color, separatorWidth);
+        }
+    }
+
+    private void drawSurfNames(NameSurferEntry entry, Color color, double separatorWidth) {
+        for (int i = 0; i < NDECADES; i++) {
+            int rank = entry.getRank(i);
+            double x = separatorWidth * i;
+            double y = getNameY(rank);
+
+            String name = entry.getName();
+            if (rank == 0) {
+                y -= UNRANKED_DATE_PADDING;
+                name += "*";
+            } else {
+                name += " " + rank;
+            }
+
+            GLabel nameLabel = new GLabel(name);
+            nameLabel.setColor(color);
+            labels.add(nameLabel);
+            add(nameLabel, x, y);
+        }
+    }
+
+    private void drawSurfLines(NameSurferEntry entry, Color color, double separatorWidth) {
+        for (int i = 0; i < NDECADES - 1; i++) {
+            double x = separatorWidth * i;
+            double y = getNameY(entry.getRank(i));
+            double nextDecadeY = getNameY(entry.getRank(i + 1));
+
+            GLine line = new GLine(x, y, x + separatorWidth, nextDecadeY);
+            line.setColor(color);
+
+            lines.add(line);
+            add(line);
+        }
+    }
+
+    // calculates the Y coordinate based on the rank
+    private double getNameY(int rank) {
+        if (rank == 0) {
+            return getHeight() - GRAPH_MARGIN_SIZE;
+        }
+
+        double yRatio = (double) (getHeight() - GRAPH_MARGIN_SIZE * 2) / MAX_RANK;
+        return GRAPH_MARGIN_SIZE + rank * yRatio;
+    }
+
+    // returns a color based on the number of graphs
+    private Color getColor(int count) {
+        switch (count) {
+        case 0:
+            return Color.BLACK;
+        case 1:
+            return Color.RED;
+        case 2:
+            return Color.BLUE;
+        case 3:
+            return Color.YELLOW;
+        default:
+            return Color.GREEN;
+        }
     }
 
 	/* Implementation of the ComponentListener interface */
@@ -101,4 +174,5 @@ public class NameSurferGraph extends GCanvas
     /* INSTANCE VARIABLES */
     private ArrayList<NameSurferEntry> entryList = new ArrayList<>();
     private ArrayList<GLine> lines = new ArrayList<>();
+    private ArrayList<GLabel> labels = new ArrayList<>();
 }
