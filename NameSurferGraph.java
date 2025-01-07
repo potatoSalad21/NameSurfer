@@ -28,10 +28,10 @@ public class NameSurferGraph extends GCanvas
 	public void clear() {
         entryList.clear();
 
-        for (int i = 0; i < entries.size(); i++) {
-            remove(entries.get(i));
+        for (int i = 0; i < lines.size(); i++) {
+            remove(lines.get(i));
         }
-        entries.clear();
+        lines.clear();
 	}
 
 	/* Method: addEntry(entry) */
@@ -41,6 +41,7 @@ public class NameSurferGraph extends GCanvas
 	* simply stores the entry; the graph is drawn by calling update.
 	*/
 	public void addEntry(NameSurferEntry entry) {
+        entryList.add(entry);
 	}
 
 	/**
@@ -52,26 +53,41 @@ public class NameSurferGraph extends GCanvas
 	*/
 	public void update() {
         removeAll();
-        drawGrid();
+        drawGraph();
 	}
 
-    private void drawBorder() {
+    private void drawGraph() {
+        drawGrid();
+        drawDates();
+        drawSurfLines();
+    }
+
+    private void drawDates() {
+        double decadeSeparatorWidth = (double) getWidth() / NDECADES;
+        for (int i = 0; i < NDECADES; i++) {
+            double dateX = i * decadeSeparatorWidth;
+            GLabel decadeLabel = new GLabel(Integer.toString(START_DECADE + 10 * i));
+            add(decadeLabel, dateX, getHeight() - GRAPH_MARGIN_SIZE / 4);
+        }
+    }
+
+    private void drawGrid() {
+        // draw borders
         GLine marginLineUpper = new GLine(0, getWidth() - GRAPH_MARGIN_SIZE, getWidth(), getHeight() - GRAPH_MARGIN_SIZE);
         GLine marginLineLower = new GLine(0, GRAPH_MARGIN_SIZE, getWidth(), GRAPH_MARGIN_SIZE);
         add(marginLineUpper);
         add(marginLineLower);
+
+        double lineSeparatorX = (double) getWidth() / NDECADES;
+        for (int i = 0; i < NDECADES; i++) {
+            double lineX = lineSeparatorX * i;
+            GLine line = new GLine(lineX, 0, lineX, getHeight());
+            add(line);
+        }
     }
 
-    private void drawGrid() {
-        drawBorder();
-
+    private void drawSurfLines() {
         double lineStartX = 0;
-        for (int i = 0; i < NDECADES; i++) {
-            GLine line = new GLine(lineStartX, 0, lineStartX, getHeight());
-            add(line);
-
-            lineStartX += getWidth() / NDECADES;
-        }
     }
 
 	/* Implementation of the ComponentListener interface */
@@ -80,6 +96,9 @@ public class NameSurferGraph extends GCanvas
 	public void componentResized(ComponentEvent e) { update(); }
 	public void componentShown(ComponentEvent e) { }
 
+    private static final int UNRANKED_DATE_PADDING = 5;
+
     /* INSTANCE VARIABLES */
     private ArrayList<NameSurferEntry> entryList = new ArrayList<>();
+    private ArrayList<GLine> lines = new ArrayList<>();
 }
