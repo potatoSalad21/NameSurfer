@@ -79,6 +79,7 @@ public class NameSurferGraph extends GCanvas
         }
     }
 
+    // draws the grid (2 horizontal lines and vertical lines for decades)
     private void drawGrid(double separatorWidth) {
         // draw borders
         GLine marginLineUpper = new GLine(0, getWidth() - GRAPH_MARGIN_SIZE, getWidth(), getHeight() - GRAPH_MARGIN_SIZE);
@@ -93,6 +94,7 @@ public class NameSurferGraph extends GCanvas
         }
     }
 
+    // represent entries with surf lines and names on the graph
     private void drawNames(double separatorWidth) {
         for (int i = 0; i < entryList.size(); i++) {
             Color color = getColor(i % 4);
@@ -102,11 +104,12 @@ public class NameSurferGraph extends GCanvas
         }
     }
 
+    // draw surf names with an offset
     private void drawSurfNames(NameSurferEntry entry, Color color, double separatorWidth) {
         for (int i = 0; i < NDECADES; i++) {
             int rank = entry.getRank(i);
             double x = separatorWidth * i;
-            double y = getNameY(rank);
+            double y = getNameY(rank) - NAME_OFFSET;
 
             String name = entry.getName();
             if (rank == 0) {
@@ -170,6 +173,7 @@ public class NameSurferGraph extends GCanvas
 	public void componentShown(ComponentEvent e) { }
 
     private static final int UNRANKED_DATE_PADDING = 5;
+    private static final int NAME_OFFSET = 5;
 
     /* INSTANCE VARIABLES */
     private ArrayList<NameSurferEntry> entryList = new ArrayList<>();

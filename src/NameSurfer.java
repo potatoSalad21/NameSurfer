@@ -40,7 +40,9 @@ public class NameSurfer extends Program implements NameSurferConstants {
 	public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
         if (e.getSource() == textField || command.equals("Graph")) {
-            NameSurferEntry entry = db.findEntry(textField.getText());
+            String name = textField.getText();
+            name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase(); // make input case-insensitive
+            NameSurferEntry entry = db.findEntry(name);
             if (entry != null) {
                 graph.addEntry(entry);
                 graph.update();
@@ -54,7 +56,7 @@ public class NameSurfer extends Program implements NameSurferConstants {
     private void addInteractors() {
         // add text field
         JLabel label = new JLabel("");
-        textField = new JTextField("name", 50);
+        textField = new JTextField("", 50);
         textField.addActionListener(this);
         // add buttons
         JButton graphBtn = new JButton("Graph");

@@ -22,6 +22,7 @@ public class NameSurferDataBase implements NameSurferConstants {
  */
 	public NameSurferDataBase(String filename) throws IOException {
         entriesDb = new HashMap<>();
+        BufferedReader reader;
 
         try {
             reader = new BufferedReader(new FileReader(filename));
@@ -50,7 +51,6 @@ public class NameSurferDataBase implements NameSurferConstants {
 	}
 
     /* INSTANCE VARIABLES */
-    private BufferedReader reader;
     private HashMap<String, NameSurferEntry> entriesDb;
 }
 
